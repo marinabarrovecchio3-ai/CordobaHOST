@@ -1,8 +1,25 @@
 # CórdobaHOST
 
-Sitio web de **CórdobaHOST**, una administradora de alquileres temporarios en Córdoba, Argentina (Capital, Carlos Paz, Calamuchita, Punilla, Traslasierra y Alta Gracia).
+Sitio web de **CórdobaHOST**: alojamientos temporarios en Córdoba, Argentina, y administración de propiedades para dueños.
 
 Es un sitio estático (HTML + CSS + JS), sin build ni dependencias.
+
+## Páginas
+
+- `index.html`: para huéspedes. Buscador por fechas, alojamientos, guías de actividades, clima en tiempo real, reseñas y contacto.
+- `propietarios.html`: para dueños. Servicios, cómo funciona, calculadora de ingresos, preguntas frecuentes y contacto.
+
+Los formularios y botones arman un mensaje y lo abren en WhatsApp.
+
+## Editar contenido
+
+Casi todo se cambia en **`data.js`**:
+- `WHATSAPP_NUMBER`: el número real (formato `549351XXXXXXX`).
+- `ALOJAMIENTOS`: las propiedades (las que hay son ejemplos). Para las fotos, subilas a `img/` y poné la ruta en `foto`.
+- `RESENAS`: las reseñas reales. La sección aparece sola cuando hay alguna.
+
+El email y el Instagram están en el pie de página y la sección de contacto de cada HTML.
+Las tarifas de referencia de la calculadora están en `script.js` (`TARIFA_BASE`).
 
 ## Ver localmente
 
@@ -11,15 +28,6 @@ npx serve .
 # o
 python3 -m http.server 8000
 ```
-
-## Antes de publicar
-
-En `script.js`:
-- `WHATSAPP_NUMBER`: el número real de WhatsApp (formato `549351XXXXXXX`).
-- `TARIFA_BASE`: las tarifas de referencia por noche de cada zona para la calculadora.
-
-En `index.html`:
-- El email de contacto y el link de Instagram.
 
 ## Publicar
 
