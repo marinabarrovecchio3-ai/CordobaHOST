@@ -3,7 +3,7 @@
 // ================================================================
 
 // Número de WhatsApp: código de país + área, sin "+" ni espacios.
-const WHATSAPP_NUMBER = "5493510000000";
+const WHATSAPP_NUMBER = "5493541586458";
 
 // Alojamientos. Para agregar fotos, poné el archivo en /img y completá "foto": "img/nombre.jpg".
 // ⚠️ Estos tres son EJEMPLOS: reemplazalos por las propiedades reales y borrá "ejemplo: true".

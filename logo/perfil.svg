@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080">
+  <rect width="1080" height="1080" fill="#1f241e"/>
+  <g transform="translate(316 250) scale(7)" fill="none" stroke="#a9b493" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M4 44 V22 L22 6 L36 18 M22 44 V30 H30 V44 M2 44 H62 M36 44 L48 22 L60 44"/>
+  </g>
+  <g font-family="Plus Jakarta Sans, Helvetica, Arial, sans-serif" fill="#a9b493" text-anchor="middle">
+    <text x="540" y="720" font-size="88" font-weight="700" letter-spacing="8">CÓRDOBA HOST</text>
+    <text x="540" y="790" font-size="30" letter-spacing="16">SIERRAS &amp; CIUDAD</text>
+  </g>
+</svg>
