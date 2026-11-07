@@ -9,16 +9,17 @@ const escapeHtml = (s) =>
 const pesos = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
 
 const COMODIDADES = [
-  ["mascotas", "🐾", "Acepta mascotas"],
+  ["mascotas", "🐾", "Mascotas pequeñas"],
   ["pileta", "🏊", "Pileta"],
   ["cochera", "🚗", "Cochera"],
   ["aire", "❄️", "Aire acondicionado"],
   ["ropa_blanca", "🛏️", "Ropa blanca"],
 ];
 
-// La cochera puede ser sólo para auto o también para camioneta
+// Texto de cada comodidad: la cochera puede ser sólo para auto o también para camioneta
 const comodidad = (p, k, ico, txt) =>
-  k === "cochera" ? [p.cochera_camioneta ? "🚙" : "🚗", p.cochera_camioneta ? "Cochera para auto o camioneta" : "Cochera para auto"] : [ico, txt];
+  k === "cochera" ? [p.cochera_camioneta ? "🚙" : "🚗", p.cochera_camioneta ? "Cochera para auto o camioneta" : "Cochera para auto"] :
+  k === "mascotas" ? [ico, "Mascotas pequeñas (consultar por medianas o grandes)"] : [ico, txt];
 
 // Links de WhatsApp
 document.querySelectorAll(".js-wa").forEach((a) => {
