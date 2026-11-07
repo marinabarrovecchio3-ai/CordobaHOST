@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Panel · CórdobaHOST</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="admin.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+</head>
+<body class="admin">
+  <header class="site-header">
+    <div class="container nav">
+      <a href="index.html" class="logo" aria-label="Ir a la web">
+        <svg viewBox="0 0 64 48" aria-hidden="true"><path d="M4 44 V22 L22 6 L36 18 M22 44 V30 H30 V44 M2 44 H62 M36 44 L48 22 L60 44" /></svg>
+        <span class="logo-text"><b>CÓRDOBA</b><b>HOST</b><small>PANEL</small></span>
+      </a>
+      <div class="a-user" id="userBox" hidden>
+        <span id="userEmail"></span>
+        <a href="index.html" target="_blank" class="btn btn-ghost btn-small">Ver web</a>
+        <button type="button" class="btn btn-sage btn-small" id="logout">Salir</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container a-main">
+    <!-- Sin configurar -->
+    <section id="vNoConfig" class="a-card a-narrow" hidden>
+      <h1>Panel no configurado</h1>
+      <p class="muted">Falta completar <code>SUPABASE_URL</code> y <code>SUPABASE_KEY</code> en <code>data.js</code>.</p>
+    </section>
+
+    <!-- Login -->
+    <section id="vLogin" class="a-card a-narrow" hidden>
+      <h1>Ingresar al panel</h1>
+      <p class="muted">Administrá las propiedades que se muestran en la web.</p>
+      <form id="loginForm" class="a-form">
+        <label>Email<input type="email" name="email" required autocomplete="username" /></label>
+        <label>Contraseña<input type="password" name="password" required autocomplete="current-password" /></label>
+        <button class="btn" type="submit">Ingresar</button>
+        <p class="a-error" id="loginError" role="alert"></p>
+      </form>
+    </section>
+
+    <!-- Lista -->
+    <section id="vList" hidden>
+      <div class="a-head">
+        <div>
+          <h1>Propiedades</h1>
+          <p class="muted" id="listCount"></p>
+        </div>
+        <button type="button" class="btn" id="btnNew">+ Nueva propiedad</button>
+      </div>
+      <div class="a-search">
+        <input type="search" id="search" placeholder="Buscar por nombre, zona o tipo…" aria-label="Buscar" />
+      </div>
+      <div class="a-list" id="list"></div>
+    </section>
+
+    <!-- Edición -->
+    <section id="vEdit" hidden>
+      <div class="a-head">
+        <div>
+          <button type="button" class="a-back" id="btnBack">← Volver a la lista</button>
+          <h1 id="editTitle">Nueva propiedad</h1>
+        </div>
+      </div>
+      <form id="editForm" class="a-edit">
+        <div class="a-card">
+          <h2>Datos</h2>
+          <div class="a-grid">
+            <label class="span2">Nombre<input name="nombre" required maxlength="80" placeholder="Ej: Cabaña Los Pinos" /></label>
+            <label>Zona<input name="zona" required list="zonas" placeholder="Ej: Villa Carlos Paz" /></label>
+            <label>Tipo<input name="tipo" required list="tipos" placeholder="Ej: Cabaña" /></label>
+            <label class="span2">Descripción<textarea name="descripcion" rows="4" maxlength="1500" placeholder="Contá lo mejor de la propiedad: ubicación, vistas, qué la hace especial…"></textarea></label>
+            <label>Precio por noche (ARS)<input name="precio" type="number" min="0" step="500" required inputmode="numeric" placeholder="Ej: 70000" /></label>
+            <label><span>Dormitorios <small>(0 = monoambiente)</small></span><input name="dormitorios" type="number" min="0" max="20" required value="1" /></label>
+            <label>Huéspedes mínimo<input name="huespedes_min" type="number" min="1" max="30" required value="1" /></label>
+            <label>Huéspedes máximo<input name="huespedes_max" type="number" min="1" max="30" required value="2" /></label>
+            <label>Baños<input name="banos" type="number" min="0" max="20" required value="1" /></label>
+            <label><span>Orden <small>(menor = aparece antes)</small></span><input name="orden" type="number" value="0" /></label>
+          </div>
+          <datalist id="zonas"></datalist>
+          <datalist id="tipos"></datalist>
+        </div>
+
+        <div class="a-card">
+          <h2>Comodidades</h2>
+          <div class="a-checks">
+            <label><input type="checkbox" name="mascotas" /> 🐾 Acepta mascotas</label>
+            <label><input type="checkbox" name="pileta" /> 🏊 Pileta</label>
+            <label><input type="checkbox" name="cochera" /> 🚗 Cochera</label>
+            <label><input type="checkbox" name="aire" /> ❄️ Aire acondicionado</label>
+            <label><input type="checkbox" name="ropa_blanca" /> 🛏️ Ropa blanca</label>
+          </div>
+        </div>
+
+        <div class="a-card">
+          <h2>Fotos</h2>
+          <p class="muted">La primera es la portada. Usá las flechas para ordenarlas.</p>
+          <div class="a-photos" id="photos"></div>
+          <label class="btn btn-light a-upload">
+            📷 Agregar fotos
+            <input type="file" id="fileInput" accept="image/*" multiple hidden />
+          </label>
+          <p class="muted" id="uploadStatus" aria-live="polite"></p>
+        </div>
+
+        <div class="a-card">
+          <h2>Publicación</h2>
+          <div class="a-checks">
+            <label><input type="checkbox" name="activo" checked /> Visible en la web</label>
+            <label><input type="checkbox" name="destacado" /> ★ Destacada (aparece primero)</label>
+          </div>
+        </div>
+
+        <div class="a-bar">
+          <button type="button" class="a-danger" id="btnDelete" hidden>Eliminar propiedad</button>
+          <span class="a-error" id="editError" role="alert"></span>
+          <button type="button" class="btn btn-light" id="btnCancel">Cancelar</button>
+          <button type="submit" class="btn" id="btnSave">Guardar</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <script src="data.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

@@ -1,47 +1,41 @@
 // ================================================================
-//  DATOS DEL SITIO: editá este archivo para cambiar el contenido
+//  CONFIGURACIÓN DEL SITIO
 // ================================================================
 
 // Número de WhatsApp: código de país + área, sin "+" ni espacios.
 const WHATSAPP_NUMBER = "5493541586458";
 
-// Alojamientos. Para agregar fotos, poné el archivo en /img y completá "foto": "img/nombre.jpg".
-// ⚠️ Estos tres son EJEMPLOS: reemplazalos por las propiedades reales y borrá "ejemplo: true".
-const ALOJAMIENTOS = [
+// Conexión con Supabase (donde el panel /admin guarda propiedades y fotos).
+// La clave "publishable" es pública por diseño: los permisos los controla la base de datos.
+// Mientras estén vacías, la web muestra las propiedades de ejemplo de abajo.
+const SUPABASE_URL = "";
+const SUPABASE_KEY = "";
+
+// Reseñas reales de huéspedes. La sección "Reseñas" aparece sola cuando hay al menos una.
+// Formato: { texto: "Todo impecable…", autor: "Nombre", alojamiento: "Casa del Lago", puntaje: "5.0", plataforma: "Google" },
+const RESENAS = [];
+
+// Propiedades de EJEMPLO: sólo se usan mientras Supabase no esté configurado.
+const ALOJAMIENTOS_EJEMPLO = [
   {
-    zona: "Nueva Córdoba",
-    nombre: "Loft Buen Pastor",
+    id: "ejemplo-1", nombre: "Loft Buen Pastor", zona: "Córdoba Capital", tipo: "Departamento",
     descripcion: "Departamento moderno a pasos del Paseo del Buen Pastor, ideal para escapadas urbanas y viajes de trabajo.",
-    precio: 45,
-    capacidad: "hasta 2",
-    foto: "",
-    destacado: false,
-    ejemplo: true,
+    precio: 45000, huespedes_min: 1, huespedes_max: 2, dormitorios: 1, banos: 1,
+    mascotas: false, pileta: false, cochera: false, aire: true, ropa_blanca: true,
+    fotos: [], destacado: false,
   },
   {
-    zona: "Villa Carlos Paz",
-    nombre: "Casa del Lago",
+    id: "ejemplo-2", nombre: "Casa del Lago", zona: "Villa Carlos Paz", tipo: "Casa",
     descripcion: "Casa luminosa con vista al lago San Roque, pileta y parrilla. Perfecta para familias.",
-    precio: 90,
-    capacidad: "hasta 6",
-    foto: "",
-    destacado: true,
-    ejemplo: true,
+    precio: 120000, huespedes_min: 4, huespedes_max: 6, dormitorios: 3, banos: 2,
+    mascotas: true, pileta: true, cochera: true, aire: true, ropa_blanca: true,
+    fotos: [], destacado: true,
   },
   {
-    zona: "Villa General Belgrano",
-    nombre: "Cabaña Los Pinos",
-    descripcion: "Cabaña cálida entre pinos, a minutos del centro del pueblo. Todo el encanto del valle.",
-    precio: 70,
-    capacidad: "hasta 4",
-    foto: "",
-    destacado: false,
-    ejemplo: true,
+    id: "ejemplo-3", nombre: "Cabaña Los Pinos", zona: "Valle de Calamuchita", tipo: "Cabaña",
+    descripcion: "Cabaña cálida entre pinos, a minutos del centro de Villa General Belgrano.",
+    precio: 70000, huespedes_min: 2, huespedes_max: 4, dormitorios: 2, banos: 1,
+    mascotas: true, pileta: false, cochera: true, aire: false, ropa_blanca: false,
+    fotos: [], destacado: false,
   },
 ];
-
-// Reseñas reales de huéspedes (copialas de Airbnb o Booking).
-// La sección "Reseñas" aparece sola cuando hay al menos una.
-// Ejemplo de formato:
-// { texto: "Todo impecable…", autor: "Nombre", alojamiento: "Casa del Lago", puntaje: "5.0", plataforma: "Airbnb" },
-const RESENAS = [];

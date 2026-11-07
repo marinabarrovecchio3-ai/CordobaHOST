@@ -49,34 +49,70 @@
       </div>
     </section>
 
-    <!-- BUSCADOR -->
+    <!-- FILTROS -->
     <div class="container">
-      <form class="search" id="searchForm">
-        <label class="f-dest">Destino
-          <select name="zona">
-            <option>Cualquier zona</option>
-            <option>Córdoba Capital</option>
-            <option>Villa Carlos Paz</option>
-            <option>Valle de Calamuchita</option>
-            <option>Punilla</option>
-            <option>Traslasierra</option>
-          </select>
-        </label>
-        <label>Llegada<input type="date" name="llegada" required /></label>
-        <label>Salida<input type="date" name="salida" required /></label>
-        <label>Huéspedes
-          <select name="huespedes">
-            <option>1 adulto</option>
-            <option selected>2 adultos</option>
-            <option>3 personas</option>
-            <option>4 personas</option>
-            <option>5 personas</option>
-            <option>6 o más</option>
-          </select>
-        </label>
-        <button class="btn btn-dark" type="submit">Buscar disponibilidad</button>
+      <form class="filters" id="filters" aria-label="Filtrar propiedades">
+        <div class="f-row">
+          <label>Huéspedes
+            <select name="huespedes">
+              <option value="">Cualquier cantidad</option>
+              <option value="1">1 persona</option>
+              <option value="2">2 personas</option>
+              <option value="3">3 personas</option>
+              <option value="4">4 personas</option>
+              <option value="5">5 personas</option>
+              <option value="6">6 personas</option>
+              <option value="7">7 personas</option>
+              <option value="8">8 personas</option>
+              <option value="9">9 personas</option>
+              <option value="10">10 o más</option>
+            </select>
+          </label>
+          <label>Zona<select name="zona"><option value="">Todas las zonas</option></select></label>
+          <label>Tipo<select name="tipo"><option value="">Todos los tipos</option></select></label>
+          <label>Dormitorios
+            <select name="dormitorios">
+              <option value="">Cualquiera</option>
+              <option value="1">1 dormitorio</option>
+              <option value="2">2 dormitorios</option>
+              <option value="3">3 dormitorios</option>
+              <option value="4">4 o más</option>
+            </select>
+          </label>
+          <label class="f-price">Precio máximo por noche <output id="precioOut">Sin límite</output>
+            <input type="range" name="precio" min="0" max="0" step="5000" value="0" />
+          </label>
+        </div>
+        <div class="f-chips" role="group" aria-label="Comodidades">
+          <label class="chip"><input type="checkbox" name="mascotas" /> 🐾 Acepta mascotas</label>
+          <label class="chip"><input type="checkbox" name="pileta" /> 🏊 Pileta</label>
+          <label class="chip"><input type="checkbox" name="cochera" /> 🚗 Cochera</label>
+          <label class="chip"><input type="checkbox" name="aire" /> ❄️ Aire acondicionado</label>
+          <label class="chip"><input type="checkbox" name="ropa_blanca" /> 🛏️ Ropa blanca</label>
+          <button type="reset" class="link-reset">Limpiar filtros</button>
+        </div>
       </form>
     </div>
+
+    <!-- ALOJAMIENTOS -->
+    <section id="alojamientos" class="section dark catalog">
+      <div class="container">
+        <p class="kicker left">Nuestros alojamientos</p>
+        <div class="catalog-head">
+          <h2>Encontrá tu <span class="accent">lugar</span></h2>
+          <p class="on-dark" id="resultCount" aria-live="polite"></p>
+        </div>
+        <div class="props" id="props"></div>
+        <div class="empty" id="emptyState" hidden>
+          <p>No encontramos propiedades con esos filtros.</p>
+          <p class="on-dark">Probá quitando alguno, o escribinos y te ayudamos a encontrar la ideal.</p>
+          <div class="empty-actions">
+            <button type="button" class="btn btn-light btn-small" id="emptyReset">Limpiar filtros</button>
+            <a href="#" class="btn btn-small js-wa">Consultar por WhatsApp</a>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- PROMESA -->
     <section class="section promise">
@@ -89,19 +125,10 @@
         </div>
         <div class="stat-grid">
           <div class="stat"><strong>6</strong><span>Zonas de Córdoba donde estamos</span></div>
-          <div class="stat"><strong class="ico">🏡</strong><span>Alojamientos en Airbnb y Booking</span></div>
+          <div class="stat"><strong class="ico">💬</strong><span>Consultas y reservas directas por WhatsApp</span></div>
           <div class="stat"><strong>100%</strong><span>Anfitriones locales cordobeses</span></div>
           <div class="stat"><strong>24<small>/7</small></strong><span>Atención ante cualquier consulta o imprevisto</span></div>
         </div>
-      </div>
-    </section>
-
-    <!-- ALOJAMIENTOS -->
-    <section id="alojamientos" class="section dark">
-      <div class="container">
-        <p class="kicker left">Nuestros alojamientos</p>
-        <h2>Propiedades <span class="accent">destacadas</span></h2>
-        <div class="props" id="props"></div>
       </div>
     </section>
 
@@ -218,6 +245,11 @@
       <small>© <span id="year"></span> CórdobaHOST</small>
     </div>
   </footer>
+
+  <dialog class="modal" id="propModal" aria-labelledby="modalTitle">
+    <button class="modal-close" type="button" aria-label="Cerrar">✕</button>
+    <div id="modalBody"></div>
+  </dialog>
 
   <a href="#" class="wa-float js-wa" aria-label="Escribinos por WhatsApp">
     <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3a13 13 0 0 0-11.2 19.6L3 29l6.6-1.7A13 13 0 1 0 16 3zm0 23.6c-2 0-4-.6-5.7-1.6l-.4-.2-3.9 1 1-3.8-.3-.4A10.6 10.6 0 1 1 16 26.6zm5.8-7.9c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1a8.7 8.7 0 0 1-4.3-3.8c-.3-.6.3-.5 1-1.7.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.5c.2.2 2.4 3.6 5.8 5 2.1.9 3 1 4 .8.6-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5l-.3-.2z"/></svg>

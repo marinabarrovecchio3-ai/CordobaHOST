@@ -6,16 +6,28 @@ Es un sitio estático (HTML + CSS + JS), sin build ni dependencias.
 
 ## Páginas
 
-- `index.html`: para huéspedes. Buscador por fechas, alojamientos, guías de actividades, clima en tiempo real, reseñas y contacto.
+- `index.html`: catálogo para turistas. Filtros (huéspedes, zona, tipo, dormitorios, precio y comodidades), ficha de cada propiedad con galería, guías de actividades, clima en tiempo real, reseñas y contacto.
+- `admin.html` (`/admin`): panel privado para cargar y editar propiedades, precios y fotos.
 - `propietarios.html`: para dueños. Servicios, cómo funciona, calculadora de ingresos, preguntas frecuentes y contacto.
 
-Los formularios y botones arman un mensaje y lo abren en WhatsApp.
+Las consultas se hacen por WhatsApp: no hay reservas online ni calendario de disponibilidad.
+
+## Propiedades y panel de administración
+
+Las propiedades y sus fotos se guardan en **Supabase** y se editan desde `/admin`.
+
+Configuración inicial (una sola vez):
+1. Crear un proyecto en Supabase y aplicar `supabase/schema.sql`.
+2. Agregar los emails autorizados a la tabla `admins` (en minúsculas).
+3. Crear esos usuarios en Supabase → Authentication → Users → Add user (con contraseña).
+4. Completar `SUPABASE_URL` y `SUPABASE_KEY` (clave *publishable*) en `data.js`.
+
+Mientras `data.js` no tenga esos datos, la web muestra propiedades de ejemplo.
 
 ## Editar contenido
 
-Casi todo se cambia en **`data.js`**:
+En **`data.js`**:
 - `WHATSAPP_NUMBER`: el número de WhatsApp (formato `549` + código de área + número).
-- `ALOJAMIENTOS`: las propiedades (las que hay son ejemplos). Para las fotos, subilas a `img/` y poné la ruta en `foto`.
 - `RESENAS`: las reseñas reales. La sección aparece sola cuando hay alguna.
 
 Los datos de contacto (nombre y teléfono visible) están en el pie de página y la sección de contacto de cada HTML.

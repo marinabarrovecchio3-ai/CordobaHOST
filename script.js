@@ -1,10 +1,20 @@
-const $ = (sel) => document.querySelector(sel);
+const $ = (sel, root = document) => root.querySelector(sel);
 
 const waLink = (text) =>
   `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 
 const escapeHtml = (s) =>
-  String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+const pesos = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
+
+const COMODIDADES = [
+  ["mascotas", "🐾", "Acepta mascotas"],
+  ["pileta", "🏊", "Pileta"],
+  ["cochera", "🚗", "Cochera"],
+  ["aire", "❄️", "Aire acondicionado"],
+  ["ropa_blanca", "🛏️", "Ropa blanca"],
+];
 
 // Links de WhatsApp
 document.querySelectorAll(".js-wa").forEach((a) => {
@@ -27,28 +37,167 @@ menu.querySelectorAll("a").forEach((a) =>
   })
 );
 
-// Alojamientos
+// ---------------------------------------------------------------
+// Catálogo de propiedades
+// ---------------------------------------------------------------
 const props = $("#props");
-if (props) {
-  props.innerHTML = ALOJAMIENTOS.map((p) => `
+const filters = $("#filters");
+let catalogo = [];
+
+async function cargarPropiedades() {
+  if (!SUPABASE_URL || !SUPABASE_KEY) return ALOJAMIENTOS_EJEMPLO.map((p) => ({ ...p, ejemplo: true }));
+  const url = `${SUPABASE_URL}/rest/v1/propiedades?select=*&activo=eq.true&order=destacado.desc,orden.asc,created_at.desc`;
+  const res = await fetch(url, { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } });
+  if (!res.ok) throw new Error(`Supabase ${res.status}`);
+  return res.json();
+}
+
+const capacidad = (p) =>
+  p.huespedes_min === p.huespedes_max
+    ? `${p.huespedes_max} ${p.huespedes_max === 1 ? "huésped" : "huéspedes"}`
+    : `${p.huespedes_min} a ${p.huespedes_max} huéspedes`;
+
+const dorms = (p) => (p.dormitorios === 0 ? "Monoambiente" : `${p.dormitorios} ${p.dormitorios === 1 ? "dormitorio" : "dormitorios"}`);
+
+const consultaMsg = (p) => {
+  const h = filters?.huespedes.value;
+  return `¡Hola CórdobaHOST! Quiero consultar disponibilidad en ${p.nombre} (${p.zona})` +
+    (h ? ` para ${h === "10" ? "10 o más" : h} ${h === "1" ? "persona" : "personas"}` : "") + ".";
+};
+
+function tarjeta(p, i) {
+  const foto = p.fotos?.[0];
+  const iconos = COMODIDADES.filter(([k]) => p[k]).map(([, ico, txt]) => `<span title="${txt}" aria-label="${txt}">${ico}</span>`).join("");
+  return `
     <article class="prop">
-      <div class="prop-img${p.foto ? "" : " no-photo"}">
-        ${p.foto ? `<img src="${escapeHtml(p.foto)}" alt="${escapeHtml(p.nombre)}" loading="lazy" />` : `<span>📷 Foto próximamente</span>`}
-        ${p.destacado ? `<span class="badge">★ Experiencia destacada</span>` : ""}
+      <button type="button" class="prop-img${foto ? "" : " no-photo"}" data-i="${i}" aria-label="Ver ${escapeHtml(p.nombre)}">
+        ${foto ? `<img src="${escapeHtml(foto)}" alt="" loading="lazy" />` : `<span>📷 Foto próximamente</span>`}
+        ${p.destacado ? `<span class="badge">★ Destacada</span>` : ""}
         ${p.ejemplo ? `<span class="badge badge-demo">Ejemplo</span>` : ""}
-      </div>
+        ${p.fotos?.length > 1 ? `<span class="badge badge-count">📷 ${p.fotos.length}</span>` : ""}
+      </button>
       <div class="prop-body">
-        <p class="prop-zone">${escapeHtml(p.zona)}</p>
+        <p class="prop-zone">${escapeHtml(p.tipo)} · ${escapeHtml(p.zona)}</p>
         <h3>${escapeHtml(p.nombre)}</h3>
-        <p class="prop-desc">${escapeHtml(p.descripcion)}</p>
+        <p class="prop-facts">👤 ${capacidad(p)} · 🛏️ ${dorms(p)}</p>
+        ${iconos ? `<p class="prop-icons">${iconos}</p>` : ""}
         <div class="prop-foot">
-          <span><b>desde USD ${escapeHtml(p.precio)}</b> <small>/noche</small></span>
-          <span class="cap">👤 ${escapeHtml(p.capacidad)}</span>
+          <span><small>desde</small> <b>${pesos.format(p.precio)}</b> <small>/noche</small></span>
         </div>
-        <a class="btn btn-dark btn-small btn-block" target="_blank" rel="noopener"
-           href="${waLink(`¡Hola CórdobaHOST! Quiero consultar disponibilidad en ${p.nombre} (${p.zona}).`)}">Consultar disponibilidad</a>
+        <div class="prop-actions">
+          <button type="button" class="btn btn-light btn-small" data-i="${i}">Ver más</button>
+          <a class="btn btn-dark btn-small" target="_blank" rel="noopener" href="${waLink(consultaMsg(p))}">Consultar</a>
+        </div>
       </div>
-    </article>`).join("");
+    </article>`;
+}
+
+function filtrar() {
+  const f = filters;
+  const h = parseInt(f.huespedes.value, 10);
+  const d = parseInt(f.dormitorios.value, 10);
+  const max = parseInt(f.precio.value, 10);
+  const sinLimite = max >= parseInt(f.precio.max, 10);
+  return catalogo.filter((p) =>
+    (!h || (h >= 10 ? p.huespedes_max >= 10 : p.huespedes_min <= h && h <= p.huespedes_max)) &&
+    (!f.zona.value || p.zona === f.zona.value) &&
+    (!f.tipo.value || p.tipo === f.tipo.value) &&
+    (!d || (d >= 4 ? p.dormitorios >= 4 : p.dormitorios === d)) &&
+    (sinLimite || p.precio <= max) &&
+    COMODIDADES.every(([k]) => !f[k].checked || p[k])
+  );
+}
+
+let visibles = [];
+function render() {
+  visibles = filtrar();
+  props.innerHTML = visibles.map(tarjeta).join("");
+  $("#emptyState").hidden = visibles.length > 0 || catalogo.length === 0;
+  $("#resultCount").textContent = catalogo.length
+    ? `${visibles.length} ${visibles.length === 1 ? "propiedad" : "propiedades"}`
+    : "";
+  const precio = parseInt(filters.precio.value, 10);
+  $("#precioOut").textContent = precio >= parseInt(filters.precio.max, 10) ? "Sin límite" : pesos.format(precio);
+}
+
+function opciones(select, valores) {
+  [...new Set(valores)].sort((a, b) => a.localeCompare(b, "es")).forEach((v) => select.add(new Option(v, v)));
+}
+
+function prepararFiltros() {
+  opciones(filters.zona, catalogo.map((p) => p.zona));
+  opciones(filters.tipo, catalogo.map((p) => p.tipo));
+  const precios = catalogo.map((p) => p.precio);
+  const step = 5000;
+  filters.precio.min = Math.floor(Math.min(...precios, 0) / step) * step;
+  filters.precio.max = Math.ceil(Math.max(...precios, step) / step) * step;
+  filters.precio.value = filters.precio.max;
+  filters.addEventListener("input", render);
+  filters.addEventListener("submit", (e) => e.preventDefault());
+  filters.addEventListener("reset", () => setTimeout(() => {
+    filters.precio.value = filters.precio.max;
+    render();
+  }));
+  $("#emptyReset").addEventListener("click", () => filters.reset());
+}
+
+// Ficha de la propiedad (modal con galería)
+const modal = $("#propModal");
+function abrirFicha(p) {
+  const fotos = p.fotos || [];
+  $("#modalBody").innerHTML = `
+    <div class="gallery">
+      <div class="g-main${fotos.length ? "" : " no-photo"}">
+        ${fotos.length ? `<img src="${escapeHtml(fotos[0])}" alt="${escapeHtml(p.nombre)}" />` : `<span>📷 Foto próximamente</span>`}
+        ${fotos.length > 1 ? `<button type="button" class="g-nav g-prev" aria-label="Foto anterior">‹</button><button type="button" class="g-nav g-next" aria-label="Foto siguiente">›</button>` : ""}
+      </div>
+      ${fotos.length > 1 ? `<div class="g-thumbs">${fotos.map((f, i) => `<button type="button" data-f="${i}" class="${i ? "" : "on"}" aria-label="Foto ${i + 1}"><img src="${escapeHtml(f)}" alt="" loading="lazy" /></button>`).join("")}</div>` : ""}
+    </div>
+    <div class="m-info">
+      <p class="prop-zone">${escapeHtml(p.tipo)} · ${escapeHtml(p.zona)}</p>
+      <h2 id="modalTitle">${escapeHtml(p.nombre)}</h2>
+      <p class="prop-facts">👤 ${capacidad(p)} · 🛏️ ${dorms(p)}${p.banos ? ` · 🚿 ${p.banos} ${p.banos === 1 ? "baño" : "baños"}` : ""}</p>
+      ${p.descripcion ? `<p class="m-desc">${escapeHtml(p.descripcion)}</p>` : ""}
+      <ul class="m-amen">
+        ${COMODIDADES.map(([k, ico, txt]) => `<li class="${p[k] ? "" : "no"}">${ico} ${txt}${p[k] ? "" : ": no"}</li>`).join("")}
+      </ul>
+      <div class="m-foot">
+        <span><small>desde</small> <b>${pesos.format(p.precio)}</b> <small>/noche</small></span>
+        <a class="btn" target="_blank" rel="noopener" href="${waLink(consultaMsg(p))}">Consultar disponibilidad</a>
+      </div>
+      <p class="fine">La disponibilidad y el precio final se confirman por WhatsApp según las fechas.</p>
+    </div>`;
+  let actual = 0;
+  const ver = (i) => {
+    actual = (i + fotos.length) % fotos.length;
+    $(".g-main img", modal).src = fotos[actual];
+    modal.querySelectorAll(".g-thumbs button").forEach((b, j) => b.classList.toggle("on", j === actual));
+  };
+  modal.querySelectorAll("[data-f]").forEach((b) => b.addEventListener("click", () => ver(+b.dataset.f)));
+  $(".g-prev", modal)?.addEventListener("click", () => ver(actual - 1));
+  $(".g-next", modal)?.addEventListener("click", () => ver(actual + 1));
+  modal.showModal();
+}
+
+if (props) {
+  props.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-i]");
+    if (b) abrirFicha(visibles[+b.dataset.i]);
+  });
+  $(".modal-close", modal).addEventListener("click", () => modal.close());
+  modal.addEventListener("click", (e) => { if (e.target === modal) modal.close(); });
+
+  props.innerHTML = `<p class="on-dark">Cargando propiedades…</p>`;
+  cargarPropiedades()
+    .then((data) => {
+      catalogo = data;
+      prepararFiltros();
+      render();
+      if (!catalogo.length) props.innerHTML = `<p class="on-dark">Muy pronto vas a ver nuestras propiedades acá. Mientras tanto, <a href="${waLink("¡Hola CórdobaHOST! Quiero hacer una consulta.")}" target="_blank" rel="noopener">escribinos por WhatsApp</a>.</p>`;
+    })
+    .catch(() => {
+      props.innerHTML = `<p class="on-dark">No pudimos cargar las propiedades. <a href="${waLink("¡Hola CórdobaHOST! Quiero hacer una consulta.")}" target="_blank" rel="noopener">Escribinos por WhatsApp</a> y te ayudamos.</p>`;
+    });
 }
 
 // Reseñas: la sección se muestra sólo si hay reseñas cargadas
@@ -62,31 +211,6 @@ if (reviews && RESENAS.length) {
     </figure>`).join("");
   $("#resenas").hidden = false;
   document.querySelectorAll(".js-resenas-link").forEach((a) => (a.hidden = false));
-}
-
-// Buscador → consulta por WhatsApp
-const search = $("#searchForm");
-if (search) {
-  const hoy = new Date().toISOString().slice(0, 10);
-  search.llegada.min = hoy;
-  search.salida.min = hoy;
-  search.llegada.addEventListener("change", () => {
-    search.salida.min = search.llegada.value || hoy;
-    if (search.salida.value && search.salida.value <= search.llegada.value) search.salida.value = "";
-  });
-  const fecha = (v) => v.split("-").reverse().join("/");
-  search.addEventListener("submit", (e) => {
-    e.preventDefault();
-    if (!search.reportValidity()) return;
-    const msg = [
-      "¡Hola CórdobaHOST! Quiero consultar disponibilidad:",
-      `Zona: ${search.zona.value}`,
-      `Llegada: ${fecha(search.llegada.value)}`,
-      `Salida: ${fecha(search.salida.value)}`,
-      `Huéspedes: ${search.huespedes.value}`,
-    ].join("\n");
-    window.open(waLink(msg), "_blank", "noopener");
-  });
 }
 
 // Formularios de contacto → WhatsApp
@@ -164,7 +288,7 @@ if ("IntersectionObserver" in window) {
     }),
     { threshold: 0.1 }
   );
-  document.querySelectorAll(".prop, .guide, .stat, .card, .steps li, .checks li, .faq details, .review").forEach((el) => {
+  document.querySelectorAll(".guide, .stat, .card, .steps li, .checks li, .faq details, .review").forEach((el) => {
     el.classList.add("reveal");
     io.observe(el);
   });
