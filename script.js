@@ -72,7 +72,7 @@ const consultaMsg = (p) => {
 
 function tarjeta(p, i) {
   const foto = p.fotos?.[0];
-  const iconos = COMODIDADES.filter(([k]) => p[k]).map(([, ico, txt]) => `<span title="${txt}" aria-label="${txt}">${ico}</span>`).join("");
+  const iconos = [["", "📶", "Wi-Fi"], ...COMODIDADES.filter(([k]) => p[k])].map(([, ico, txt]) => `<span title="${txt}" aria-label="${txt}">${ico}</span>`).join("");
   return `
     <article class="prop">
       <button type="button" class="prop-img${foto ? "" : " no-photo"}" data-i="${i}" aria-label="Ver ${escapeHtml(p.nombre)}">
@@ -119,7 +119,7 @@ function render() {
   props.innerHTML = visibles.map(tarjeta).join("");
   $("#emptyState").hidden = visibles.length > 0 || catalogo.length === 0;
   $("#resultCount").textContent = catalogo.length
-    ? `${visibles.length} ${visibles.length === 1 ? "propiedad" : "propiedades"}`
+    ? `${visibles.length} ${visibles.length === 1 ? "propiedad" : "propiedades"} · 📶 todas con Wi-Fi`
     : "";
   const precio = parseInt(filters.precio.value, 10);
   $("#precioOut").textContent = precio >= parseInt(filters.precio.max, 10) ? "Sin límite" : pesos.format(precio);
@@ -164,6 +164,7 @@ function abrirFicha(p) {
       <p class="prop-facts">👤 ${capacidad(p)} · 🛏️ ${dorms(p)}${p.banos ? ` · 🚿 ${p.banos} ${p.banos === 1 ? "baño" : "baños"}` : ""}</p>
       ${p.descripcion ? `<p class="m-desc">${escapeHtml(p.descripcion)}</p>` : ""}
       <ul class="m-amen">
+        <li>📶 Wi-Fi</li>
         ${COMODIDADES.map(([k, ico, txt]) => `<li class="${p[k] ? "" : "no"}">${ico} ${txt}${p[k] ? "" : ": no"}</li>`).join("")}
       </ul>
       <div class="m-foot">
