@@ -8,6 +8,7 @@ create table public.propiedades (
   tipo text not null,
   descripcion text not null default '',
   precio integer not null check (precio >= 0),
+  limpieza integer not null default 0 check (limpieza >= 0), -- cargo por estadía; 0 = sin cargo
   huespedes_min integer not null default 1 check (huespedes_min >= 1),
   huespedes_max integer not null check (huespedes_max >= 1),
   dormitorios integer not null default 1 check (dormitorios >= 0),

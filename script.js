@@ -63,9 +63,11 @@ const capacidad = (p) =>
     : `${p.huespedes_min} a ${p.huespedes_max} huéspedes`;
 
 const precioHtml = (p) =>
-  p.precio > 0
-    ? `<span><small>desde</small> <b>${pesos.format(p.precio)}</b> <small>/noche</small></span>`
-    : `<span><b>Consultar precio</b></span>`;
+  `<span>${p.precio > 0
+    ? `<small>desde</small> <b>${pesos.format(p.precio)}</b> <small>/noche</small>`
+    : `<b>Consultar precio</b>`}${p.limpieza > 0
+    ? `<small class="extra">+ ${pesos.format(p.limpieza)} de limpieza por estadía</small>`
+    : ""}</span>`;
 
 const dorms = (p) => (p.dormitorios === 0 ? "Monoambiente" : `${p.dormitorios} ${p.dormitorios === 1 ? "dormitorio" : "dormitorios"}`);
 

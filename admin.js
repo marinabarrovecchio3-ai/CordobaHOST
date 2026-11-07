@@ -5,7 +5,7 @@ const escapeHtml = (s) =>
 const pesos = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
 
 const BUCKET = "fotos";
-const NUMEROS = ["precio", "dormitorios", "huespedes_min", "huespedes_max", "banos", "orden"];
+const NUMEROS = ["precio", "limpieza", "dormitorios", "huespedes_min", "huespedes_max", "banos", "orden"];
 const CHECKS = ["mascotas", "pileta", "aire", "ropa_blanca", "activo", "destacado"];
 const VISTAS = ["vNoConfig", "vLogin", "vList", "vEdit"];
 
@@ -107,7 +107,7 @@ function renderLista() {
       ${p.fotos[0] ? `<img class="a-thumb" src="${escapeHtml(p.fotos[0])}" alt="" loading="lazy" />` : `<div class="a-thumb">📷</div>`}
       <div>
         <h3>${escapeHtml(p.nombre)}</h3>
-        <p>${escapeHtml(p.tipo)} · ${escapeHtml(p.zona)} · ${p.huespedes_min === p.huespedes_max ? p.huespedes_max : `${p.huespedes_min} a ${p.huespedes_max}`} huéspedes · ${p.precio > 0 ? `${pesos.format(p.precio)}/noche` : "Consultar precio"}</p>
+        <p>${escapeHtml(p.tipo)} · ${escapeHtml(p.zona)} · ${p.huespedes_min === p.huespedes_max ? p.huespedes_max : `${p.huespedes_min} a ${p.huespedes_max}`} huéspedes · ${p.precio > 0 ? `${pesos.format(p.precio)}/noche` : "Consultar precio"}${p.limpieza > 0 ? ` + ${pesos.format(p.limpieza)} limpieza` : ""}</p>
         <div class="a-tags">
           <span class="a-tag ${p.activo ? "on" : "offt"}">${p.activo ? "Visible" : "Pausada"}</span>
           ${p.destacado ? `<span class="a-tag star">★ Destacada</span>` : ""}
