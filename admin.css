@@ -36,6 +36,8 @@
 .a-checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
 .a-checks label { display: flex; align-items: center; gap: 10px; background: var(--cream); padding: 12px 14px; border-radius: 12px; cursor: pointer; font-weight: 500; }
 .a-checks input { width: 20px; height: 20px; accent-color: var(--forest-2); }
+.a-checks .a-select { padding: 6px 8px 6px 14px; }
+.a-checks .a-select select { flex: 1; min-width: 0; border: 0; background: transparent; padding: .5em .3em; font-weight: 500; }
 
 .a-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-bottom: 14px; }
 .a-photo { position: relative; border-radius: 12px; overflow: hidden; background: var(--cream-2); aspect-ratio: 4 / 3; }

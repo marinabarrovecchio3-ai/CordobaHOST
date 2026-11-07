@@ -93,7 +93,13 @@
           <div class="a-checks">
             <label><input type="checkbox" name="mascotas" /> 🐾 Acepta mascotas</label>
             <label><input type="checkbox" name="pileta" /> 🏊 Pileta</label>
-            <label><input type="checkbox" name="cochera" /> 🚗 Cochera</label>
+            <label class="a-select">🚗
+              <select name="cochera_tipo" aria-label="Cochera">
+                <option value="no">Sin cochera</option>
+                <option value="auto">Cochera para auto</option>
+                <option value="camioneta">Cochera para auto o camioneta</option>
+              </select>
+            </label>
             <label><input type="checkbox" name="aire" /> ❄️ Aire acondicionado</label>
             <label><input type="checkbox" name="ropa_blanca" /> 🛏️ Ropa blanca</label>
           </div>

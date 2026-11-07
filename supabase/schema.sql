@@ -15,6 +15,7 @@ create table public.propiedades (
   mascotas boolean not null default false,
   pileta boolean not null default false,
   cochera boolean not null default false,
+  cochera_camioneta boolean not null default false,
   aire boolean not null default false,
   ropa_blanca boolean not null default false,
   fotos text[] not null default '{}',
@@ -23,7 +24,8 @@ create table public.propiedades (
   orden integer not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  constraint huespedes_rango check (huespedes_min <= huespedes_max)
+  constraint huespedes_rango check (huespedes_min <= huespedes_max),
+  constraint camioneta_requiere_cochera check (not cochera_camioneta or cochera)
 );
 
 -- Emails que pueden entrar al panel de administración

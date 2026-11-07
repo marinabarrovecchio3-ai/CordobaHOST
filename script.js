@@ -16,6 +16,10 @@ const COMODIDADES = [
   ["ropa_blanca", "🛏️", "Ropa blanca"],
 ];
 
+// La cochera puede ser sólo para auto o también para camioneta
+const comodidad = (p, k, ico, txt) =>
+  k === "cochera" ? [p.cochera_camioneta ? "🚙" : "🚗", p.cochera_camioneta ? "Cochera para auto o camioneta" : "Cochera para auto"] : [ico, txt];
+
 // Links de WhatsApp
 document.querySelectorAll(".js-wa").forEach((a) => {
   a.href = waLink("¡Hola CórdobaHOST! Quiero hacer una consulta.");
@@ -72,7 +76,8 @@ const consultaMsg = (p) => {
 
 function tarjeta(p, i) {
   const foto = p.fotos?.[0];
-  const iconos = [["", "📶", "Wi-Fi"], ...COMODIDADES.filter(([k]) => p[k])].map(([, ico, txt]) => `<span title="${txt}" aria-label="${txt}">${ico}</span>`).join("");
+  const iconos = [["📶", "Wi-Fi"], ...COMODIDADES.filter(([k]) => p[k]).map(([k, ico, txt]) => comodidad(p, k, ico, txt))]
+    .map(([ico, txt]) => `<span title="${txt}" aria-label="${txt}">${ico}</span>`).join("");
   return `
     <article class="prop">
       <button type="button" class="prop-img${foto ? "" : " no-photo"}" data-i="${i}" aria-label="Ver ${escapeHtml(p.nombre)}">
@@ -109,7 +114,8 @@ function filtrar() {
     (!f.tipo.value || p.tipo === f.tipo.value) &&
     (!d || (d >= 4 ? p.dormitorios >= 4 : p.dormitorios === d)) &&
     (sinLimite || (p.precio > 0 && p.precio <= max)) &&
-    COMODIDADES.every(([k]) => !f[k].checked || p[k])
+    COMODIDADES.every(([k]) => !f[k].checked || p[k]) &&
+    (!f.cochera_camioneta.checked || p.cochera_camioneta)
   );
 }
 
@@ -165,7 +171,11 @@ function abrirFicha(p) {
       ${p.descripcion ? `<p class="m-desc">${escapeHtml(p.descripcion)}</p>` : ""}
       <ul class="m-amen">
         <li>📶 Wi-Fi</li>
-        ${COMODIDADES.map(([k, ico, txt]) => `<li class="${p[k] ? "" : "no"}">${ico} ${txt}${p[k] ? "" : ": no"}</li>`).join("")}
+        ${COMODIDADES.map(([k, ico, txt]) => {
+          if (!p[k]) return `<li class="no">${ico} ${txt}: no</li>`;
+          const [i, t] = comodidad(p, k, ico, txt);
+          return `<li>${i} ${t}</li>`;
+        }).join("")}
       </ul>
       <div class="m-foot">
         ${precioHtml(p)}

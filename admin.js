@@ -6,7 +6,7 @@ const pesos = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS
 
 const BUCKET = "fotos";
 const NUMEROS = ["precio", "dormitorios", "huespedes_min", "huespedes_max", "banos", "orden"];
-const CHECKS = ["mascotas", "pileta", "cochera", "aire", "ropa_blanca", "activo", "destacado"];
+const CHECKS = ["mascotas", "pileta", "aire", "ropa_blanca", "activo", "destacado"];
 const VISTAS = ["vNoConfig", "vLogin", "vList", "vEdit"];
 
 const mostrar = (id) => VISTAS.forEach((v) => ($(`#${v}`).hidden = v !== id));
@@ -159,6 +159,7 @@ function abrirEdicion(p) {
   if (p) {
     ["nombre", "zona", "tipo", "descripcion", ...NUMEROS].forEach((k) => (form[k].value = p[k] ?? ""));
     CHECKS.forEach((k) => (form[k].checked = !!p[k]));
+    form.cochera_tipo.value = p.cochera ? (p.cochera_camioneta ? "camioneta" : "auto") : "no";
   }
   renderFotos();
   mostrar("vEdit");
@@ -246,6 +247,8 @@ form.addEventListener("submit", async (e) => {
   ["nombre", "zona", "tipo", "descripcion"].forEach((k) => (datos[k] = form[k].value.trim()));
   NUMEROS.forEach((k) => (datos[k] = parseInt(form[k].value, 10) || 0));
   CHECKS.forEach((k) => (datos[k] = form[k].checked));
+  datos.cochera = form.cochera_tipo.value !== "no";
+  datos.cochera_camioneta = form.cochera_tipo.value === "camioneta";
   if (datos.huespedes_min > datos.huespedes_max) {
     err.textContent = "El mínimo de huéspedes no puede ser mayor que el máximo.";
     return;
