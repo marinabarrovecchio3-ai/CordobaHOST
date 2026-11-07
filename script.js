@@ -64,8 +64,10 @@ const capacidad = (p) =>
 
 const precioHtml = (p) =>
   `<span>${p.precio > 0
-    ? `<small>desde</small> <b>${pesos.format(p.precio)}</b> <small>/noche</small>`
-    : `<b>Consultar precio</b>`}${p.limpieza > 0
+    ? `${p.precio_desde ? "<small>desde</small> " : ""}<b>${pesos.format(p.precio)}</b> <small>/noche</small>`
+    : `<b>Consultar precio</b>`}${p.precio_nota
+    ? `<small class="nota">${escapeHtml(p.precio_nota)}</small>`
+    : ""}${p.limpieza > 0
     ? `<small class="extra">+ ${pesos.format(p.limpieza)} de limpieza por estadía</small>`
     : ""}</span>`;
 

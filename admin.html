@@ -82,6 +82,8 @@
             <label>Huéspedes mínimo<input name="huespedes_min" type="number" min="1" max="30" required value="1" /></label>
             <label>Huéspedes máximo<input name="huespedes_max" type="number" min="1" max="30" required value="2" /></label>
             <label>Baños<input name="banos" type="number" min="0" max="20" required value="1" /></label>
+            <label class="span2 a-inline"><input type="checkbox" name="precio_desde" /> Mostrar “desde” delante del precio <small>(cuando varía según la cantidad de personas)</small></label>
+            <label class="span2"><span>Aclaración del precio <small>(opcional, se ve debajo del precio)</small></span><input name="precio_nota" maxlength="120" placeholder="Ej: Consultar precio para 2 personas" /></label>
             <label><span>Limpieza por estadía (ARS) <small>(0 = sin cargo)</small></span><input name="limpieza" type="number" min="0" step="500" required value="0" inputmode="numeric" /></label>
             <label><span>Orden <small>(menor = aparece antes)</small></span><input name="orden" type="number" value="0" /></label>
           </div>

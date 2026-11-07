@@ -66,3 +66,5 @@
   .a-grid .span2 { grid-column: auto; }
   .a-card { padding: 18px; }
 }
+.a-grid .a-inline { display: flex; align-items: center; gap: 10px; background: var(--cream); padding: 12px 14px; border-radius: 12px; cursor: pointer; font-weight: 500; }
+.a-grid .a-inline input { width: 20px; height: 20px; flex: none; accent-color: var(--forest-2); }

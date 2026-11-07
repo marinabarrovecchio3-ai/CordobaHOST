@@ -6,7 +6,7 @@ const pesos = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS
 
 const BUCKET = "fotos";
 const NUMEROS = ["precio", "limpieza", "dormitorios", "huespedes_min", "huespedes_max", "banos", "orden"];
-const CHECKS = ["mascotas", "pileta", "aire", "ropa_blanca", "activo", "destacado"];
+const CHECKS = ["mascotas", "pileta", "aire", "ropa_blanca", "precio_desde", "activo", "destacado"];
 const VISTAS = ["vNoConfig", "vLogin", "vList", "vEdit"];
 
 const mostrar = (id) => VISTAS.forEach((v) => ($(`#${v}`).hidden = v !== id));
@@ -107,7 +107,7 @@ function renderLista() {
       ${p.fotos[0] ? `<img class="a-thumb" src="${escapeHtml(p.fotos[0])}" alt="" loading="lazy" />` : `<div class="a-thumb">📷</div>`}
       <div>
         <h3>${escapeHtml(p.nombre)}</h3>
-        <p>${escapeHtml(p.tipo)} · ${escapeHtml(p.zona)} · ${p.huespedes_min === p.huespedes_max ? p.huespedes_max : `${p.huespedes_min} a ${p.huespedes_max}`} huéspedes · ${p.precio > 0 ? `${pesos.format(p.precio)}/noche` : "Consultar precio"}${p.limpieza > 0 ? ` + ${pesos.format(p.limpieza)} limpieza` : ""}</p>
+        <p>${escapeHtml(p.tipo)} · ${escapeHtml(p.zona)} · ${p.huespedes_min === p.huespedes_max ? p.huespedes_max : `${p.huespedes_min} a ${p.huespedes_max}`} huéspedes · ${p.precio > 0 ? `${p.precio_desde ? "desde " : ""}${pesos.format(p.precio)}/noche` : "Consultar precio"}${p.limpieza > 0 ? ` + ${pesos.format(p.limpieza)} limpieza` : ""}</p>
         <div class="a-tags">
           <span class="a-tag ${p.activo ? "on" : "offt"}">${p.activo ? "Visible" : "Pausada"}</span>
           ${p.destacado ? `<span class="a-tag star">★ Destacada</span>` : ""}
@@ -157,7 +157,7 @@ function abrirEdicion(p) {
   $("#editTitle").textContent = p ? p.nombre : "Nueva propiedad";
   $("#btnDelete").hidden = !p;
   if (p) {
-    ["nombre", "zona", "tipo", "descripcion", ...NUMEROS].forEach((k) => (form[k].value = p[k] ?? ""));
+    ["nombre", "zona", "tipo", "descripcion", "precio_nota", ...NUMEROS].forEach((k) => (form[k].value = p[k] ?? ""));
     CHECKS.forEach((k) => (form[k].checked = !!p[k]));
     form.cochera_tipo.value = p.cochera ? (p.cochera_camioneta ? "camioneta" : "auto") : "no";
   }
@@ -244,7 +244,7 @@ form.addEventListener("submit", async (e) => {
   const err = $("#editError");
   err.textContent = "";
   const datos = { id: editando.id, fotos: editando.fotos };
-  ["nombre", "zona", "tipo", "descripcion"].forEach((k) => (datos[k] = form[k].value.trim()));
+  ["nombre", "zona", "tipo", "descripcion", "precio_nota"].forEach((k) => (datos[k] = form[k].value.trim()));
   NUMEROS.forEach((k) => (datos[k] = parseInt(form[k].value, 10) || 0));
   CHECKS.forEach((k) => (datos[k] = form[k].checked));
   datos.cochera = form.cochera_tipo.value !== "no";
