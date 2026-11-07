@@ -57,6 +57,11 @@ const capacidad = (p) =>
     ? `${p.huespedes_max} ${p.huespedes_max === 1 ? "huésped" : "huéspedes"}`
     : `${p.huespedes_min} a ${p.huespedes_max} huéspedes`;
 
+const precioHtml = (p) =>
+  p.precio > 0
+    ? `<span><small>desde</small> <b>${pesos.format(p.precio)}</b> <small>/noche</small></span>`
+    : `<span><b>Consultar precio</b></span>`;
+
 const dorms = (p) => (p.dormitorios === 0 ? "Monoambiente" : `${p.dormitorios} ${p.dormitorios === 1 ? "dormitorio" : "dormitorios"}`);
 
 const consultaMsg = (p) => {
@@ -82,7 +87,7 @@ function tarjeta(p, i) {
         <p class="prop-facts">👤 ${capacidad(p)} · 🛏️ ${dorms(p)}</p>
         ${iconos ? `<p class="prop-icons">${iconos}</p>` : ""}
         <div class="prop-foot">
-          <span><small>desde</small> <b>${pesos.format(p.precio)}</b> <small>/noche</small></span>
+          ${precioHtml(p)}
         </div>
         <div class="prop-actions">
           <button type="button" class="btn btn-light btn-small" data-i="${i}">Ver más</button>
@@ -103,7 +108,7 @@ function filtrar() {
     (!f.zona.value || p.zona === f.zona.value) &&
     (!f.tipo.value || p.tipo === f.tipo.value) &&
     (!d || (d >= 4 ? p.dormitorios >= 4 : p.dormitorios === d)) &&
-    (sinLimite || p.precio <= max) &&
+    (sinLimite || (p.precio > 0 && p.precio <= max)) &&
     COMODIDADES.every(([k]) => !f[k].checked || p[k])
   );
 }
@@ -162,7 +167,7 @@ function abrirFicha(p) {
         ${COMODIDADES.map(([k, ico, txt]) => `<li class="${p[k] ? "" : "no"}">${ico} ${txt}${p[k] ? "" : ": no"}</li>`).join("")}
       </ul>
       <div class="m-foot">
-        <span><small>desde</small> <b>${pesos.format(p.precio)}</b> <small>/noche</small></span>
+        ${precioHtml(p)}
         <a class="btn" target="_blank" rel="noopener" href="${waLink(consultaMsg(p))}">Consultar disponibilidad</a>
       </div>
       <p class="fine">La disponibilidad y el precio final se confirman por WhatsApp según las fechas.</p>
