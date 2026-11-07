@@ -31,7 +31,11 @@ create table public.admins (
   email text primary key check (email = lower(email))
 );
 
-create function public.is_admin()
+-- En un esquema privado para que no quede expuesta en la API
+create schema if not exists private;
+grant usage on schema private to anon, authenticated;
+
+create function private.is_admin()
 returns boolean
 language sql
 stable
@@ -43,6 +47,9 @@ as $$
     where email = lower(coalesce(auth.jwt() ->> 'email', ''))
   );
 $$;
+
+revoke execute on function private.is_admin() from public;
+grant execute on function private.is_admin() to anon, authenticated;
 
 create function public.set_updated_at()
 returns trigger
@@ -65,14 +72,14 @@ alter table public.admins enable row level security;
 -- Cualquiera ve las propiedades activas; los admins ven todas
 create policy "ver propiedades" on public.propiedades
   for select to anon, authenticated
-  using (activo or (select public.is_admin()));
+  using (activo or (select private.is_admin()));
 
 create policy "admins crean" on public.propiedades
-  for insert to authenticated with check ((select public.is_admin()));
+  for insert to authenticated with check ((select private.is_admin()));
 create policy "admins editan" on public.propiedades
-  for update to authenticated using ((select public.is_admin())) with check ((select public.is_admin()));
+  for update to authenticated using ((select private.is_admin())) with check ((select private.is_admin()));
 create policy "admins borran" on public.propiedades
-  for delete to authenticated using ((select public.is_admin()));
+  for delete to authenticated using ((select private.is_admin()));
 
 -- Cada usuario sólo puede consultar si su propio email es admin
 create policy "ver mi admin" on public.admins
@@ -85,7 +92,7 @@ values ('fotos', 'fotos', true, 5242880, array['image/jpeg', 'image/png', 'image
 
 create policy "admins suben fotos" on storage.objects
   for insert to authenticated
-  with check (bucket_id = 'fotos' and (select public.is_admin()));
+  with check (bucket_id = 'fotos' and (select private.is_admin()));
 create policy "admins borran fotos" on storage.objects
   for delete to authenticated
-  using (bucket_id = 'fotos' and (select public.is_admin()));
+  using (bucket_id = 'fotos' and (select private.is_admin()));

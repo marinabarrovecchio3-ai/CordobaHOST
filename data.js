@@ -6,10 +6,10 @@
 const WHATSAPP_NUMBER = "5493541586458";
 
 // Conexión con Supabase (donde el panel /admin guarda propiedades y fotos).
-// La clave "publishable" es pública por diseño: los permisos los controla la base de datos.
+// La clave "anon" es pública por diseño: los permisos los controla la base de datos.
 // Mientras estén vacías, la web muestra las propiedades de ejemplo de abajo.
-const SUPABASE_URL = "";
-const SUPABASE_KEY = "";
+const SUPABASE_URL = "https://lsohhjybdshihawftkpi.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzb2hoanliZHNoaWhhd2Z0a3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQwODQ3MDksImV4cCI6MjEwOTY2MDcwOX0.uhLoHKNgIyFHwNkiWu0OjYMBb4RC1mvssnTj3tseDcI";
 
 // Reseñas reales de huéspedes. La sección "Reseñas" aparece sola cuando hay al menos una.
 // Formato: { texto: "Todo impecable…", autor: "Nombre", alojamiento: "Casa del Lago", puntaje: "5.0", plataforma: "Google" },
