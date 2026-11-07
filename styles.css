@@ -242,7 +242,7 @@ input[type="range"] { padding: 0; accent-color: var(--terracota); border: 0; }
 .contact-form { background: var(--cream); color: var(--ink); border-radius: var(--radius); padding: 30px; display: grid; gap: 16px; }
 
 /* Footer */
-.site-footer { background: var(--night); color: #b9bcaf; padding: 56px 0 32px; text-align: center; font-size: .92rem; }
+.site-footer { background: var(--night); color: #b9bcaf; padding: 56px 0 96px; text-align: center; font-size: .92rem; }
 .footer-inner { display: grid; justify-items: center; gap: 18px; }
 .site-footer a { color: var(--cream); text-decoration: none; }
 .site-footer a:hover { color: var(--terracota-light); }
@@ -292,3 +292,7 @@ input[type="range"] { padding: 0; accent-color: var(--terracota); border: 0; }
   html { scroll-behavior: auto; }
   .reveal { opacity: 1; transform: none; transition: none; }
 }
+
+/* Acceso al panel (pie de página) */
+.site-footer .admin-link { color: #8d9184; border: 1px solid #3a4535; border-radius: 999px; padding: .2em .8em; margin-left: 4px; white-space: nowrap; }
+.site-footer .admin-link:hover { color: var(--cream); border-color: var(--sage); }
